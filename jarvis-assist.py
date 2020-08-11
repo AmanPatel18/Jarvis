@@ -1,5 +1,6 @@
 import pyttsx3
 import time
+import weather
 from speech_recognition import *
 from os import system
 import webbrowser
@@ -57,7 +58,7 @@ class Jarvis:
         os.startfile("C:\\Windows\\notepad.exe")
 
     def bye(self):
-        option=['\nGood Bye Sir!','\nGood Bye and Take Care Sir!','\nBye-Bye']
+        option=['\nGood Bye Sir!','\nGood Bye and Take Care Sir!','\nBye-Bye...See you later!']
         choice=randint(0,len(option)-1)
         print(option[choice])
         self.speak(option[choice])
@@ -67,11 +68,11 @@ class Jarvis:
     def on_web(self,query):
         if 'open' in query:
             title=query.replace('open ','')
-            webbrowser.open_new_tab('http://'+title+'.com')
+            webbrowser.open_new_tab('https://'+title+'.com')
             self.speak('Opening '+title) 
 
     def say_name(self):
-      message='\nMy name is Jarvis'
+      message='\nMy name is Jarvis.'
       print(message)
       self.speak(message)
 
@@ -84,12 +85,44 @@ class Jarvis:
     def play_music(self):
         option=['\nPlaying Music...','\nSurfing Music...']
         choice=randint(0,len(option)-1)
-        music_dir='C:\\users\\patel\\documents\\python\\tkinter\\music'
+        music_dir='C:\\users\\patel\\music\\jarvis'
         songs=os.listdir(music_dir)
         os.startfile(os.path.join(music_dir,songs[0]))
         print(option[choice])
         self.speak(option[choice])
+    
+    def things_i_do(self):
+        system('cls')
+        option=['wish You.','tell you current time.','open file explorer.','open notepad.','shutdown this app on good bye.','open things in browser.','play music.','get information from wikipedia.','tell you my name.','tell you the current temperature.']
 
+        print('\nI can do following things:-\n')
+        self.speak('I can do following things:-')
+
+        for task in option:
+            print('I can '+task)
+            self.speak('I can '+task)
+
+    def weather(self):
+        qusetion='\nSir, can you please tell me the city name?'
+        print(qusetion)
+        self.speak(qusetion)
+        
+        recognize = Recognizer()
+        with Microphone() as source:    
+            print('\nListening...')
+            recognize.energy_threshold = 4000
+            recognize.pause_threshold=2
+            audio=recognize.listen(source)
+        
+            print('\nRecognizing...')
+            city=recognize.recognize_google(audio,language='en-in')
+
+            weather.init(city)
+            temperature=weather.temp()
+            message=f'\nThe current temperature in {city} is:'
+            print(message+' '+str(temperature)+u"\N{DEGREE SIGN}C")
+            self.speak(message+' '+str(temperature)+' degree celcius')
+    
     def takeCommand(self):
         recognize = Recognizer()
         with Microphone() as source:    
@@ -110,19 +143,9 @@ class Jarvis:
                 print('\nSorry Sir!, please say that again!' )
                 self.speak('Sorry Sir!, please say that again!')
     
-    def things_i_do(self):
-        system('cls')
-        option=['Wish You','Tell you Current Time','Open File explorer','Open Notepad','Shutdown this app on Good Bye','Open things in browser','Play Music','get information from Wikipedia','Tell my name']
-
-        print('\nI can do following things:-')
-        self.speak('I can do following things:-')
-
-        for task in option:
-            print('I can '+task)
-            self.speak('I can '+task)
     
     def main(self):
-        color(text="black",bg="light red")
+        color(text="black",bg="light blue")
         self.wishMe()
         while(True):
             query=self.takeCommand()
@@ -155,6 +178,9 @@ class Jarvis:
             
             elif 'things' in query or 'can do' in query:
                 self.things_i_do()
+            
+            elif 'weather' in query or 'temperature' in query:
+                self.weather()
 
             else:
                 r=Recognizer()
