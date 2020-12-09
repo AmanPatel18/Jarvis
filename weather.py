@@ -21,3 +21,13 @@ def temp():
     temp=data2-273
     temp=round(temp,1)
     return temp
+
+if __name__ == '__main__':
+    city_name=input('Enter the city name:')
+    init(city_name)
+    temperature=temp()
+    print('The current temperature in {} is {} degree celcius.'.format(city_name, temperature))
+    input()
+
+
+
